@@ -65,7 +65,7 @@ button:hover {
   text-align: center;
 }
 
-#wrapper #inputName {
+#wrapper #inputNumber {
   height: 20px;
   font-size: 1.2em;
 }
@@ -97,11 +97,11 @@ p {
 
 </style>
 
-<template id="nameTemplate">
-<div id="wrapper">
-  <h2>Welcome to the hello app! <br> Please enter your name: </h2>
-  <input id="inputName"><button>Submit</button>
-</div>
+<template id="numberTemplate">
+    <div id="wrapper">
+        <h2>Welcome to the number game app! <br> Choose a number from 0 to 99: </h2>
+        <input id="inputNumber"><button>Submit</button>
+    </div>
 </template>
 <template id="topicTemplate">
 <form id="form">
@@ -130,7 +130,6 @@ p {
 <template id="helloTemplate">
 <p id="helloMessage"></p>
 <p id="title"></p>
-<img id="topicImage" src="${IMG_URLS[0]}" alt="A topic">
 <p id="poems"></p>
 <p id="author"></p>
 </template>
@@ -144,43 +143,53 @@ customElements.define('number-game',
    */
   class extends HTMLElement {
     /**
+     * The div elements.
+     *
+     * @type {HTMLDivElement}
+     */
+    #board
+
+    /**
      * The number-game element.
      *
      * @type {HTMLDivElement}
      */
-     #list
+    #numberTemplate
 
-     /**
+    /**
       * Creates an instance of the current type.
       */
-     constructor () {
-       super()
+    constructor () {
+      super()
 
-       // Attach a shadow DOM tree to this element and
-       // append the template to the shadow root.
-       this.attachShadow({ mode: 'open' })
-         .appendChild(template.content.cloneNode(true))
+      // Attach a shadow DOM tree to this element and
+      // append the template to the shadow root.
+      this.attachShadow({ mode: 'open' })
+        .appendChild(template.content.cloneNode(true))
 
-       // Get the high-score element in the shadow root.
-       this.#list = this.shadowRoot.querySelectorAll('.list')
-     }
+      // Get the high-score element in the shadow root.
+      this.#board = this.shadowRoot.querySelector('#board')
+      this.#numberTemplate = this.shadowRoot.querySelector('#numberTemplate')
+    }
 
-     /**
+    /**
      * Called after the element is inserted into the DOM.
      */
     connectedCallback () {
-        this.getRandomNumber()
-      }
+      this.getRandomNumber()
+    }
 
-     /**
+    /**
       * Writes the user's score in the high-score element.
       *
       * @param {string} name - The user's nickname.
       * @param {string} result - The user's score.
       */
-     getRandomNumber () {
-        const randomNumber= Math.floor(Math.random() * 100)
-        console.log(randomNumber)
-     }
+    getRandomNumber () {
+      const template = this.#numberTemplate.content.cloneNode(true)
+      this.#board.appendChild(template)
+      const randomNumber = Math.floor(Math.random() * 100)
+      console.log(randomNumber)
+    }
   }
 )
