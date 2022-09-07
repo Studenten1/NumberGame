@@ -103,35 +103,8 @@ p {
         <input id="inputNumber"><button>Submit</button>
     </div>
 </template>
-<template id="topicTemplate">
-<form id="form">
-    <p>Choose a topic for the poem:</p>
-      <div>
-        <input type="radio" id="a" name="choice" checked>
-        <label for="a">Dog</label>
-      </div>
-      <div>
-        <input type="radio" id="b" name="choice">
-        <label for="b">Water</label>
-      </div>
-      <div>
-        <input type="radio" id="c" name="choice">
-        <label for="c">Butterfly</label>
-      </div>
-      <div>
-        <input type="radio" id="d" name="choice">
-        <label for="d">Crow</label>
-      </div>
-      <div>
-        <button type="submit" id="submit">Submit</button>
-      </div>
-  </form>
-</template>
-<template id="helloTemplate">
-<p id="helloMessage"></p>
-<p id="title"></p>
-<p id="poems"></p>
-<p id="author"></p>
+<template id="resultTemplate">
+    <h2 id="resultMessage"></h2>
 </template>
 <div id="board">
 </div>
@@ -155,6 +128,7 @@ customElements.define('number-game',
      * @type {HTMLDivElement}
      */
     #numberTemplate
+    #resultTemplate
 
     /**
       * Creates an instance of the current type.
@@ -170,26 +144,53 @@ customElements.define('number-game',
       // Get the high-score element in the shadow root.
       this.#board = this.shadowRoot.querySelector('#board')
       this.#numberTemplate = this.shadowRoot.querySelector('#numberTemplate')
+      this.#resultTemplate = this.shadowRoot.querySelector('#resultTemplate')
+
+      this.chosenNumber = 0
     }
 
     /**
      * Called after the element is inserted into the DOM.
      */
     connectedCallback () {
-      this.getRandomNumber()
+      const template = this.#numberTemplate.content.cloneNode(true)
+      this.#board.appendChild(template)
+
+      this.#board.querySelector('#inputNumber').focus()
+      this.#board.querySelector('button').addEventListener('click', event => {
+        this.chosenNumber = this.#board.querySelector('#inputNumber').value
+        this.compareNumbers(randomInt)
+        event.preventDefault()
+        event.stopPropagation()
+      })
+      const randomInt = this.getRandomNumber()
     }
 
     /**
       * Writes the user's score in the high-score element.
       *
       * @param {string} name - The user's nickname.
-      * @param {string} result - The user's score.
+      * @return {int} randomNumber - The random number.
       */
     getRandomNumber () {
-      const template = this.#numberTemplate.content.cloneNode(true)
-      this.#board.appendChild(template)
       const randomNumber = Math.floor(Math.random() * 100)
       console.log(randomNumber)
+      return randomNumber
+    }
+
+    /**
+     * Compare.
+     *
+     */
+    compareNumbers (randomInt) {
+      const templateNew = this.#resultTemplate.content.cloneNode(true)
+      this.#board.appendChild(templateNew)
+
+      if (Number(this.chosenNumber) === randomInt) {
+        this.#board.querySelector('#resultMessage').textContent = 'True. Hello, well done!'
+      } else {
+        this.#board.querySelector('#resultMessage').textContent = 'False. Not correct answer!'
+      }
     }
   }
 )
