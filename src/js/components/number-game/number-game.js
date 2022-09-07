@@ -105,6 +105,7 @@ p {
 </template>
 <template id="resultTemplate">
     <h2 id="resultMessage"></h2>
+    <h2 id="numberTries"></h2>
 </template>
 <div id="board">
 </div>
@@ -147,6 +148,7 @@ customElements.define('number-game',
       this.#resultTemplate = this.shadowRoot.querySelector('#resultTemplate')
 
       this.chosenNumber = 0
+      this.numberOfTries = 0
     }
 
     /**
@@ -159,6 +161,7 @@ customElements.define('number-game',
       this.#board.querySelector('#inputNumber').focus()
       this.#board.querySelector('button').addEventListener('click', event => {
         this.chosenNumber = this.#board.querySelector('#inputNumber').value
+        this.numberOfTries++
         this.compareNumbers(randomInt)
         event.preventDefault()
         event.stopPropagation()
@@ -167,9 +170,8 @@ customElements.define('number-game',
     }
 
     /**
-      * Writes the user's score in the high-score element.
+      * Gets the random number.
       *
-      * @param {string} name - The user's nickname.
       * @return {int} randomNumber - The random number.
       */
     getRandomNumber () {
@@ -187,10 +189,14 @@ customElements.define('number-game',
       this.#board.appendChild(templateNew)
 
       if (Number(this.chosenNumber) === randomInt) {
+        this.#board.removeChild(this.#board.firstChild)
+
         this.#board.querySelector('#resultMessage').textContent = 'True. Hello, well done!'
       } else {
-        this.#board.querySelector('#resultMessage').textContent = 'False. Not correct answer!'
+        this.#board.querySelector('#resultMessage').textContent = 'False. Not correct answer! Try again.'
       }
+
+      this.#board.querySelector('#numberTries').textContent = `You have tried ${this.numberOfTries} times`
     }
   }
 )
